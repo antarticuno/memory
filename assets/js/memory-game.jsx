@@ -20,7 +20,8 @@ class Starter extends React.Component {
        cards.push(new Card(String.fromCharCode(65 + i), true));
     }
     //TODO randomize the cards
-    this.setState( _.assign({}, this.state, {board: cards}));
+    this.setState( _.assign({}, this.state,
+	    {board: cards, score: 0, revealed: [], penalty: 0}));
   }
 
   flip(index, board) {
@@ -68,11 +69,13 @@ class Starter extends React.Component {
     return (
       <div>
 	    <h1>Memory Game</h1>
-	    <button onClick={this.randomize.bind(this)}>New Game</button>
-	    <p>{this.state.score}</p>
+	    <p>Score: {this.state.score}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       
+	    <button onClick={this.randomize.bind(this)}>New Game</button></p>
+	    <div id="container">
 	    <ul>
 	    {cards}
 	    </ul>
+	    </div>
       </div>
     );
   }
@@ -91,7 +94,7 @@ function RenderedCard(props) {
     case null:
       return <li class="revealed">{card.value}</li>;
     case true:
-      return <li class="hidden" onClick={() => props.checkMatch(props.index)}>&nbsp;</li>;
+      return <li class="hidden" onClick={() => props.checkMatch(props.index)}>&nbsp;&nbsp;&nbsp;</li>;
     default:
       return <li class="revealed" onClick={() => props.checkMatch(props.index)}>{card.value}</li>
   }

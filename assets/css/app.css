@@ -2,24 +2,44 @@
 
 @import "~milligram/dist/milligram";
 
-.column > p {
-    padding-top: 10ex;
+p {
+    padding: 30px 10px;
+}
+
+h1 {
     text-align: center;
 }
 
+div#container {
+    width: 70%;
+    margin: auto;
+}
+
 ul {
+    width: 100%;
     list-style-type: none;
 }
 
 li {
-    display: inline;
-    width: 20px;
-    background-color: #222;
-    padding: 5px;
+    width: 20%;
+    height: 100px;
+    text-align: center;
+    border-radius: 10px;
     margin: 5px;
+    padding: 40px;
+}
+
+li.hidden {
+    display: inline-block;
+    background-color: #222;
+}
+
+li.hidden:hover {
+    background-color: #333;
 }
 
 li.revealed {
+    display: inline-block;
     background-color: #EEE;
     color: #222;
 }
