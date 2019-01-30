@@ -7,3 +7,20 @@
     text-align: center;
 }
 
+ul {
+    list-style-type: none;
+}
+
+li {
+    display: inline;
+    width: 20px;
+    background-color: #222;
+    padding: 5px;
+    margin: 5px;
+}
+
+li.revealed {
+    background-color: #EEE;
+    color: #222;
+}
+
