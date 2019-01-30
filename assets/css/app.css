@@ -2,10 +2,6 @@
 
 @import "~milligram/dist/milligram";
 
-p {
-    padding: 30px 10px;
-}
-
 h1 {
     text-align: center;
 }
@@ -24,18 +20,20 @@ li {
     width: 20%;
     height: 100px;
     text-align: center;
+    border: 10px double white;
     border-radius: 10px;
     margin: 5px;
-    padding: 40px;
+    padding: 30px;
 }
 
 li.hidden {
     display: inline-block;
-    background-color: #222;
+    background-image: url("https://static.vecteezy.com/system/resources/thumbnails/000/226/311/small/10996.jpg");
 }
 
 li.hidden:hover {
-    background-color: #333;
+    background: linear-gradient(rgb(0,0,0,0.25), rgb(0,0,0,0.25)),
+    url("https://static.vecteezy.com/system/resources/thumbnails/000/226/311/small/10996.jpg");
 }
 
 li.revealed {

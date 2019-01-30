@@ -19,7 +19,13 @@ class Starter extends React.Component {
        cards.push(new Card(String.fromCharCode(65 + i), true));
        cards.push(new Card(String.fromCharCode(65 + i), true));
     }
-    //TODO randomize the cards
+    for (let indexA = 0; indexA < cards.length; indexA ++) {
+      let indexB = Math.floor(Math.random() * cards.length);
+      let cardA = cards[indexA];
+      let cardB = cards[indexB];
+      cards[indexA] = cardB;
+      cards[indexB] = cardA;
+    }
     this.setState( _.assign({}, this.state,
 	    {board: cards, score: 0, revealed: [], penalty: 0}));
   }
@@ -92,10 +98,10 @@ function RenderedCard(props) {
   let card = props.card;
   switch (card.hidden) {
     case null:
-      return <li class="revealed">{card.value}</li>;
+      return <li className="revealed">{card.value}</li>;
     case true:
-      return <li class="hidden" onClick={() => props.checkMatch(props.index)}>&nbsp;&nbsp;&nbsp;</li>;
+      return <li className="hidden" onClick={() => props.checkMatch(props.index)}>&nbsp;&nbsp;&nbsp;</li>;
     default:
-      return <li class="revealed" onClick={() => props.checkMatch(props.index)}>{card.value}</li>
+      return <li className="revealed" onClick={() => props.checkMatch(props.index)}>{card.value}</li>
   }
 }
