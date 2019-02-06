@@ -2,81 +2,46 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
 
-export default function game_init(root) {
-  ReactDOM.render(<Starter />, root);
+export default function game_init(root, channel) {
+  ReactDOM.render(<Memory channel={channel} />, root);
 }
 
-class Starter extends React.Component {
+class Memory extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { score: 0, revealed: [], penalty: 0,  board: [],};
+    this.channel = props.channel;
+    this.state = { score: 0, player_board: [],};
+    
+    this.channel
+	.join()
+	.receive("ok", this.got_view.bind(this))
+	.receive("error", resp => {console.log("Unable to join", resp);});
   }
 
-  randomize() {
-    let numCards = 16;
-    let cards = [];
-    for (let i = 0; i < numCards / 2; i++) {
-       cards.push(new Card(String.fromCharCode(65 + i), true));
-       cards.push(new Card(String.fromCharCode(65 + i), true));
-    }
-    for (let indexA = 0; indexA < cards.length; indexA ++) {
-      let indexB = Math.floor(Math.random() * cards.length);
-      let cardA = cards[indexA];
-      let cardB = cards[indexB];
-      cards[indexA] = cardB;
-      cards[indexB] = cardA;
-    }
-    this.setState( _.assign({}, this.state,
-	    {board: cards, score: 0, revealed: [], penalty: 0}));
+  got_view(view) {
+    console.log("new view", view);
+    this.setState(view.game);
   }
 
-  flip(index, board) {
-    let cardToFlip = board[index];
-    let newCard = new Card(cardToFlip.value, !cardToFlip.hidden);
-    let newBoard = board.slice();
-    newBoard.splice(index, 1, newCard);
-    return newBoard;
+  on_flip(ev) {
+    this.channel.push("flip", {card: ev.target.id})
+	  .receive("ok", this.got_view.bind(this));
   }
 
-  checkMatch(currIndex) {
-    let newBoard = this.flip(currIndex, this.state.board);
-    let currentCard = newBoard[currIndex];
-    let known = this.state.revealed;
-    if (known.length == 0) {
-       this.setState(_.assign({}, this.state,
-	       {board: newBoard, revealed: [currentCard, currIndex]}));
-    }
-    else if (known[0].value == currentCard.value
-	    && currIndex != known[1]) {
-       let score2 = this.state.score + Math.max(0, 100 - 10*this.state.penalty);
-       let newCard1 = new Card(currentCard.value, null);
-       let newCard2 = new Card(known[0].value, null);
-       newBoard.splice(currIndex, 1, newCard1);
-       newBoard.splice(known[1], 1, newCard2);
-       this.setState(_.assign({}, this.state,
-	       {revealed: [], score: score2, board: newBoard, penalty: 0}));
-    }
-    else if (known[0].value != currentCard.value) {
-       let penalty2 = this.state.penalty + 1;
-       this.setState(_.assign({}, this.state,
-	       {penalty: penalty2, revealed: [], board: newBoard}));
-       setTimeout(() => {
-         let newBoard2 = this.flip(currIndex, this.state.board);
-         let newBoard3 = this.flip(known[1], newBoard2);
-         this.setState(_.assign({}, this.state, {board: newBoard3}));
-       },1000)
-    }
+  on_new(ev) {
+    this.channel.push("new", {})
+	  .receive("ok", this.got_view.bind(this));
   }
 
   render() {
-    let cards = _.map(this.state.board, (card, ii) => {
-      return <RenderedCard card={card}  checkMatch={this.checkMatch.bind(this)} key={ii} index={ii} />;
+    let cards = _.map(this.state.player_board, (card, ii) => {
+      return <RenderedCard card={card} key={ii} index={ii} on_flip={this.on_flip.bind(this)} />;
     });
     return (
       <div>
 	    <h1>Memory Game</h1>
 	    <p>Score: {this.state.score}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       
-	    <button onClick={this.randomize.bind(this)}>New Game</button></p>
+	    <button onClick={this.on_new.bind(this)}>New Game</button></p>
 	    <div id="container">
 	    <ul>
 	    {cards}
@@ -87,21 +52,8 @@ class Starter extends React.Component {
   }
 }
 
-class Card {
-  constructor(cardVal, hidden) {
-    this.value = cardVal;
-    this.hidden = hidden;
-  }
-}
-
 function RenderedCard(props) {
-  let card = props.card;
-  switch (card.hidden) {
-    case null:
-      return <li className="revealed">{card.value}</li>;
-    case true:
-      return <li className="hidden" onClick={() => props.checkMatch(props.index)}>&nbsp;&nbsp;&nbsp;</li>;
-    default:
-      return <li className="revealed" onClick={() => props.checkMatch(props.index)}>{card.value}</li>
-  }
+  let {card, index, on_flip} = props;
+  if (card.length > 0) return <li id={index} className="revealed">{card}</li>;
+  else return <li id={index} onClick={on_flip} className="hidden">&nbsp;&nbsp;&nbsp;</li>;
 }
