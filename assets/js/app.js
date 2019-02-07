@@ -21,6 +21,12 @@ import socket from "./socket";
 import game_init from "./memory-game";
 
 function start() {
+  let gName = document.getElementById('nameBox');
+  let joinButton = document.getElementById('joinButton');
+  if (gName && joinButton) {
+    gName.addEventListener('change',
+	    () => {joinButton.href = "/game/" + gName.value.replace(/ /g, "_");});
+  }
   let root = document.getElementById('root');
   if (root) {
     let channel = socket.channel("games:" + window.gameName, {});

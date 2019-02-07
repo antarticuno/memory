@@ -10,7 +10,7 @@ class Memory extends React.Component {
   constructor(props) {
     super(props);
     this.channel = props.channel;
-    this.state = { score: 0, player_board: [],};
+    this.state = { score: 0, player_board: [], ghost: []};
     
     this.channel
 	.join()
@@ -21,6 +21,14 @@ class Memory extends React.Component {
   got_view(view) {
     console.log("new view", view);
     this.setState(view.game);
+    if (view.game.ghost.length > 0) {
+       setTimeout(() => {
+         let newBoard = this.state.player_board.slice();
+         newBoard[this.state.ghost[0]] = "";
+         newBoard[this.state.ghost[1]] = "";
+         this.setState(_.assign({player_board: newBoard}));
+       }, 1000);
+    }
   }
 
   on_flip(ev) {
@@ -35,11 +43,14 @@ class Memory extends React.Component {
 
   render() {
     let cards = _.map(this.state.player_board, (card, ii) => {
-      return <RenderedCard card={card} key={ii} index={ii} on_flip={this.on_flip.bind(this)} />;
+      return <RenderedCard card={card}
+	                    key={ii}
+	                  index={ii}
+	                on_flip={this.on_flip.bind(this)}
+      />;
     });
     return (
       <div>
-	    <h1>Memory Game</h1>
 	    <p>Score: {this.state.score}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       
 	    <button onClick={this.on_new.bind(this)}>New Game</button></p>
 	    <div id="container">

@@ -1,6 +1,7 @@
 <div class="row">
   <div class="column">
     <h1 id="index-page">Join a Game</h1>
-    <p><a href="/game/demo">Join "demo"</a></p>
+    <input type="text" id="nameBox" />
+    <p><a id="joinButton">Join</a></p>
   </div>
 </div>
