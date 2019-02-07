@@ -15,8 +15,3 @@ echo "Starting app..."
 # Foreground for testing and for systemd
 _build/prod/rel/memory/bin/memory foreground
 
-# TODO:
-# move the memory.service file into /etc/systemd/system
-# and then enable it (systemctl enable ...service
-# and then start it (service ... start
-
